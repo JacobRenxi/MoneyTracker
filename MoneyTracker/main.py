@@ -77,7 +77,9 @@ def main():
             # Display valid categories before prompting for category input
             print("Valid categories:", valid_categories)
             category = input("Enter category: ")
-            while category not in valid_categories:
+            category = category.lower()
+
+            while category not in valid_categories_lower:
                 print("Invalid category. Valid categories are:", valid_categories)
                 category = input("Enter a valid category: ")
 
