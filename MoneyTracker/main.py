@@ -54,6 +54,7 @@ def login_here():
         new_password = input("Enter new password: ")
         try:
             login.create_user(conn, new_username, new_password)
+            print("User registered successfully. Please login.")
         except sqlite3.IntegrityError:
             print("Account creation failed, username already exists.")
             login_here()
