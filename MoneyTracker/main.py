@@ -1,5 +1,7 @@
 import sqlite3
 import matplotlib.pyplot as plt
+from datetime import datetime
+
 
 conn = sqlite3.connect('expenses.db')
 cursor = conn.cursor()
@@ -89,8 +91,9 @@ def main():
                 continue
 
             description = input("Enter description: ")
-            date = input("Enter date (YYYY-MM-DD): ")
-            add_expense(category, amount, description, date)
+
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            add_expense(category, amount, description, timestamp)
             current_budget -= amount
             print("Expense added successfully!")
 
