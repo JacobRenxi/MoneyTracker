@@ -34,13 +34,12 @@ def create_user(conn, username, password):
 
 # Function to handle user login
 def user_login(conn):
-    while True:
-        username = input("Enter username: ")
-        password = input("Enter password: ")
-        if check_user_credentials(conn, username, password):
-            print("Login successful!")
-            return username
-        else:
-            print("Invalid username or password. Exit.")
-            main.login_here()
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    if check_user_credentials(conn, username, password):
+        print("Login successful!")
+        return username
+    else:
+        print("Invalid username or password. Exit.")
+        main.login_here()
 
