@@ -52,7 +52,12 @@ def login_here():
     elif choice == '2':
         new_username = input("Enter new username: ")
         new_password = input("Enter new password: ")
-        login.create_user(conn, new_username, new_password)
+        try:
+            login.create_user(conn, new_username, new_password)
+        except sqlite3.IntegrityError:
+            print("User registration unsuccessful. Username already exists")
+            login_here()
+
         print("User registered successfully. Please login.")
         username = login.user_login(conn)
         return username
