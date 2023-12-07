@@ -32,6 +32,9 @@ def create_user(conn, username, password):
     ''', (username, password))
     conn.commit()
 
+    username = user_login_after_creation(conn, username, password)
+    return username
+
 # Function to handle user login
 def user_login(conn):
     username = input("Enter username: ")
@@ -41,7 +44,19 @@ def user_login(conn):
         return username
     else:
         print("Invalid username or password. Exit.")
-        main.login_here()
+        exit()
+        
+
+def user_login_after_creation(conn, username, password):
+
+    if check_user_credentials(conn, username, password):
+        print("Login successful!")
+        return username
+    else:
+        print("Invalid username or password. Exit.")
+        exit()
+        
+
 
 def create_user_budget_table(conn):
     cursor = conn.cursor()
