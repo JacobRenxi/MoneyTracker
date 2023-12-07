@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import login
 
-
 def add_expense(category, amount, description, date, cursor, conn):
     cursor.execute('''
         INSERT INTO expenses (category, amount, description, date)
@@ -40,6 +39,7 @@ def generate_report(cursor):
 def login_here():
     conn = sqlite3.connect('users.db')
     login.create_user_table(conn)
+    login.create_user_budget_table(conn)
 
     print("Welcome to Expense Tracker!")
     print("1. Login")
@@ -48,7 +48,7 @@ def login_here():
 
     if choice == '1':
         username = login.user_login(conn)
-        return username
+        return username, conn
     elif choice == '2':
         new_username = input("Enter new username: ")
         new_password = input("Enter new password: ")
@@ -60,18 +60,19 @@ def login_here():
 
         print("User registered successfully. Please login.")
         username = login.user_login(conn)
-        return username
+        return username, conn
     else:
         print("Invalid choice. Exiting.")
         conn.close()
 
 def main():    
-    username = login_here()
+    username, conn = login_here()
     # After successful login, use the username for database connection
+    
     user_db_name= f'{username}_expenses.db'
 
-    conn = sqlite3.connect(user_db_name)
-    cursor = conn.cursor()
+    conn_expenses = sqlite3.connect(user_db_name)
+    cursor = conn_expenses.cursor()
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS expenses (
@@ -82,7 +83,7 @@ def main():
             date TEXT
         )
     ''')
-    conn.commit()
+    conn_expenses.commit()
 
     def lowercase_categories(categories):
         return [category.lower() for category in categories]
@@ -91,12 +92,17 @@ def main():
     Below is the categories that we can pick!
     Add more or change categories below!
     '''
+
     valid_categories = ['Food', 'Transportation', 'Housing', 'Entertainment', 'Utilities', 'Other', 'ADD*']
     valid_categories_lower = lowercase_categories(valid_categories)
 
-    max_budget = float(input("Enter your maximum budget: "))
-    current_budget = max_budget
-
+    # Retrieve user's budget information
+    user_budget_info = login.get_user_budget(conn, username)
+    if user_budget_info:
+        max_budget, current_budget = user_budget_info
+    else:
+        max_budget = float(input("Enter your maximum budget: "))
+        current_budget = max_budget
 
 
     while True:
@@ -154,7 +160,10 @@ def main():
         else:
             print("Invalid choice. Please try again.")
 
+        login.save_user_budget(conn, username, max_budget, current_budget)
+
     conn.close()
+    conn_expenses.close()
 
 if __name__ == "__main__":
     main()
