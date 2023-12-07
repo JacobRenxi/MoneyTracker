@@ -15,7 +15,6 @@ def add_expense(category, amount, description, date, user_db_name):
         ''', (category, amount, description, date))
         conn_expenses.commit()
         conn_expenses.close()
-        print("Expense added successfully!")
     except sqlite3.Error as e:
         print("Error adding expense:", e)
 
