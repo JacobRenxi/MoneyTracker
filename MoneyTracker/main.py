@@ -96,13 +96,11 @@ def login_here():
         new_username = input("Enter new username: ")
         new_password = input("Enter new password: ")
         try:
-            login.create_user(conn, new_username, new_password)
+            username = login.create_user(conn, new_username, new_password)
+            print(f"Welcome {username}")
         except sqlite3.IntegrityError:
             print("User registration unsuccessful. Username already exists")
-            login_here()
 
-        print("User registered successfully. Please login.")
-        username = login.user_login(conn)
         return username, conn
     else:
         print("Invalid choice. Exiting.")
@@ -113,6 +111,15 @@ def lowercase_categories(categories):
 
 def main():    
     username, conn = login_here()
+    # Retrieve user's budget information
+    user_budget_info = login.get_user_budget(conn, username)
+    if user_budget_info:
+        max_budget, current_budget = user_budget_info
+    else:
+        max_budget = float(input("Enter your maximum budget: "))
+        current_budget = max_budget
+        login.save_user_budget(conn, username, max_budget, current_budget)
+    
     cursor, user_db_name = user_exp_database(username)
     
     '''
@@ -122,14 +129,6 @@ def main():
     valid_categories = ['Food', 'Transportation', 'Housing', 'Entertainment', 'Utilities', 'Other', 'ADD*']
     valid_categories_lower = lowercase_categories(valid_categories)
 
-    # Retrieve user's budget information
-    user_budget_info = login.get_user_budget(conn, username)
-    if user_budget_info:
-        max_budget, current_budget = user_budget_info
-    else:
-        max_budget = float(input("Enter your maximum budget: "))
-        current_budget = max_budget
-    
     while True:
         print("\nExpense Tracker")
         print("Current Budget:", current_budget)
