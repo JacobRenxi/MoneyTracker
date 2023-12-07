@@ -43,3 +43,31 @@ def user_login(conn):
         print("Invalid username or password. Exit.")
         main.login_here()
 
+def create_user_budget_table(conn):
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_budget (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            max_budget FLOAT,
+            current_budget FLOAT
+        )
+    ''')
+    conn.commit()
+
+# Function to save or update user budget information
+def save_user_budget(conn, username, max_budget, current_budget):
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT OR REPLACE INTO user_budget (username, max_budget, current_budget)
+        VALUES (?, ?, ?)
+    ''', (username, max_budget, current_budget))
+    conn.commit()
+
+# Function to retrieve user budget information
+def get_user_budget(conn, username):
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT max_budget, current_budget FROM user_budget WHERE username = ?
+    ''', (username,))
+    return cursor.fetchone()
