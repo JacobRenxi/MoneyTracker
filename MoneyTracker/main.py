@@ -14,7 +14,6 @@ def add_expense(category, amount, description, date, user_db_name):
         ''', (category, amount, description, date))
         conn_expenses.commit()
         conn_expenses.close()
-        print("Expense added successfully!")
     except sqlite3.Error as e:
         print("Error adding expense:", e)
 
@@ -130,6 +129,7 @@ def main():
     valid_categories_lower = lowercase_categories(valid_categories)
 
     while True:
+
         print("\nExpense Tracker")
         print("Current Budget:", current_budget)
         print("1. Add Expense")
