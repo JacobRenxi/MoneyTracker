@@ -2,6 +2,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 from datetime import datetime
 import login
+import csv
 
 def add_expense(category, amount, description, date, user_db_name):
 
@@ -108,6 +109,21 @@ def login_here():
 def lowercase_categories(categories):
     return [category.lower() for category in categories]
 
+def export_csv(user_db_name):
+    conn_expenses = sqlite3.connect(user_db_name)
+    cursor = conn_expenses.cursor()
+    cursor.execute('''
+        SELECT *
+        FROM expenses
+    ''')
+    with open(user_db_name[:-3]+".csv", 'w', newline='') as f:
+        writer = csv.writer(f)
+        fieldnames = ['id', 'category', 'amount', 'description', 'date']
+        writer.writerow(fieldnames)
+        writer.writerows(cursor)
+    cursor.close()
+
+
 def main():    
     username, conn = login_here()
     # Retrieve user's budget information
@@ -129,13 +145,13 @@ def main():
     valid_categories_lower = lowercase_categories(valid_categories)
 
     while True:
-
         print("\nExpense Tracker")
         print("Current Budget:", current_budget)
         print("1. Add Expense")
         print("2. View Expenses")
         print("3. Generate Report")
-        print("4. Exit")
+        print("4. Export Expense csv")
+        print("5. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -180,6 +196,8 @@ def main():
         elif choice == '3':
             generate_report(cursor, user_db_name)
         elif choice == '4':
+            export_csv(user_db_name)
+        elif choice == '5':
             break
         else:
             print("Invalid choice. Please try again.")
