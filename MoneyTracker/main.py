@@ -119,7 +119,6 @@ def main():
     Below is the categories that we can pick!
     Add more or change categories below!
     '''
-
     valid_categories = ['Food', 'Transportation', 'Housing', 'Entertainment', 'Utilities', 'Other', 'ADD*']
     valid_categories_lower = lowercase_categories(valid_categories)
 
@@ -131,7 +130,6 @@ def main():
         max_budget = float(input("Enter your maximum budget: "))
         current_budget = max_budget
     
-
     while True:
         print("\nExpense Tracker")
         print("Current Budget:", current_budget)
